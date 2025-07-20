@@ -10,11 +10,21 @@ class MethodChannelFlutterKeyboardVisibility
   @visibleForTesting
   EventChannel eventChannel = const EventChannel('flutter_keyboard_visibility');
 
-  late final Stream<bool> _onChange = eventChannel
+  late final Stream<KeyboardVisibilityStatus> _onChange = eventChannel
       .receiveBroadcastStream()
-      .map((dynamic event) => (event as int) == 1);
+      .map((dynamic event) {
+        switch (event as int) {
+          case 2:
+            return KeyboardVisibilityStatus.iosExternalKeyboardVisible;
+          case 1:
+            return KeyboardVisibilityStatus.visible;
+          case 0:
+          default:
+            return KeyboardVisibilityStatus.notVisible;
+        }
+      });
 
   /// Emits changes to keyboard visibility from the platform
   @override
-  Stream<bool> get onChange => _onChange;
+  Stream<KeyboardVisibilityStatus> get onChange => _onChange;
 }
